@@ -72,7 +72,7 @@ Options:
 Detailed violations:
   WARNING: src/application/user/CreateUserUseCase.ts:2 → App imports infra
 
-📝 RECOMENDAÇÃO: Invocar /brainstorming para criar plano de adequação DDD
+📝 RECOMMENDATION: Invoke /brainstorming to create DDD adequacy plan
 
 🎨 Generating documentation...
 ✅ Generated 7 files in ./docs/
@@ -83,14 +83,14 @@ Detailed violations:
 When violations are found, invoke `/brainstorming` to create an adequacy plan:
 
 ```
-/brainstorming Criar plano de adequação DDD
+/brainstorming Create DDD adequacy plan
 
-Contexto:
+Context:
 - Framework: [auto-detected]
 - Violations: [from VALIDATION_REPORT.md]
 - Docs: ./docs/
 
-Objetivo: Migrar codebase para DDD clean.
+Objective: Migrate codebase to clean DDD.
 ```
 
 ## Supported Frameworks
@@ -103,6 +103,16 @@ Objetivo: Migrar codebase para DDD clean.
 ## License
 
 MIT
+
+---
+
+## Resources
+
+- 📖 [Installation Guide](INSTALL.md) — Detailed setup instructions
+- 🤝 [Contributing Guide](CONTRIBUTING.md) — How to contribute
+- 📚 [DDD Concepts](references/layer-patterns.md) — DDD pattern examples
+- 🐛 [Issues](https://github.com/tccrodrigo/hermes-ddd-validator/issues) — Report bugs
+- 💬 [Discussions](https://github.com/tccrodrigo/hermes-ddd-validator/discussions) — Ask questions
 
 ---
 
