@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{PROJECT_NAME}} — DDD Architecture</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface-hover: #1c2128;
+      --border: #30363d;
+      --text: #c9d1d9;
+      --text-muted: #8b949e;
+      --accent: #58a6ff;
+      --accent-green: #3fb950;
+      --accent-red: #f85149;
+      --accent-yellow: #d29922;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    h1 { font-size: 1.5rem; font-weight: 600; }
+    .subtitle { color: var(--text-muted); font-size: 0.875rem; }
+    nav {
+      background: var(--surface-hover);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 2rem;
+      display: flex;
+      gap: 0.5rem;
+    }
+    nav button {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.875rem;
+      transition: all 0.2s;
+    }
+    nav button:hover { background: var(--surface); }
+    nav button.active { background: var(--accent); border-color: var(--accent); color: #000; }
+    main { padding: 2rem; }
+    .diagram-container {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      min-height: 500px;
+      position: relative;
+      overflow: auto;
+    }
+    svg { width: 100%; height: auto; }
+    .node rect { fill: var(--surface-hover); stroke: var(--border); stroke-width: 2; }
+    .node.external rect { fill: #21262d; }
+    .node.database rect { fill: #388bfd20; }
+    .node text { fill: var(--text); font-size: 12px; font-weight: 500; }
+    .edge { stroke: var(--text-muted); stroke-width: 1.5; fill: none; }
+    .edge.ddd-violation { stroke: var(--accent-red); stroke-width: 3; stroke-dasharray: 5,5; }
+    .legend {
+      display: flex;
+      gap: 2rem;
+      margin-top: 1rem;
+      padding: 1rem;
+      background: var(--surface-hover);
+      border-radius: 8px;
+      font-size: 0.75rem;
+    }
+    .legend-item { display: flex; align-items: center; gap: 0.5rem; }
+    .legend-box { width: 12px; height: 12px; border-radius: 2px; }
+    .level-2 { margin-left: 2rem; }
+    .level-3 { margin-left: 4rem; }
+    .violation-marker { fill: var(--accent-red); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>{{PROJECT_NAME}}</h1>
+    <div class="subtitle">DDD Architecture — {{FRAMEWORK}} | Generated {{TIMESTAMP}}</div>
+  </header>
+  
+  <nav>
+    <button class="active" onclick="showView('index')">Index</button>
+    <button onclick="showView('context')">C4 Context</button>
+    <button onclick="showView('containers')">C4 Containers</button>
+    <button onclick="showView('components')">C4 Components</button>
+    <button onclick="showView('layers')">Layer Validation</button>
+    <button onclick="showView('contexts')">Bounded Contexts</button>
+  </nav>
+
+  <main>
+    <!-- INDEX VIEW -->
+    <div id="view-index" class="view active">
+      <h2>Architecture Documentation</h2>
+      <p>Quick links to all architectural views and validation reports:</p>
+      <ul style="margin-top: 1rem; list-style: none;">
+        <li style="margin: 0.75rem 0;">
+          <a href="INDEX.md" style="color: var(--accent);">📄 INDEX.md</a> — AI-readable overview
+        </li>
+        <li style="margin: 0.75rem 0;">
+          <a href="C4_CONTEXT.md" style="color: var(--accent);">🌍 C4_CONTEXT.md</a> — System Context (Level 1)
+        </li>
+        <li style="margin: 0.75rem 0;">
+          <a href="C4_CONTAINERS.md" style="color: var(--accent);">📦 C4_CONTAINERS.md</a> — Container View (Level 2)
+        </li>
+        <li style="margin: 0.75rem 0;">
+          <a href="C4_COMPONENTS.md" style="color: var(--accent);">⚙️ C4_COMPONENTS.md</a> — Component View (Level 3)
+        </li>
+        <li style="margin: 0.75rem 0;">
+          <a href="VALIDATION_REPORT.md" style="color: var(--accent);">✅ VALIDATION_REPORT.md</a> — DDD Validation Results
+        </li>
+        <li style="margin: 0.75rem 0;">
+          <a href="BOUNDED_CONTEXTS.md" style="color: var(--accent);">🗺️ BOUNDED_CONTEXTS.md</a> — Context Map
+        </li>
+      </ul>
+      
+      <div style="margin-top: 2rem; padding: 1rem; background: var(--surface-hover); border-radius: 8px;">
+        <h3 style="margin-bottom: 0.5rem;">Validation Summary</h3>
+        <div style="display: flex; gap: 2rem; margin-top: 1rem;">
+          <div>✅ <strong>{{PASS_COUNT}}</strong> checks passed</div>
+          <div>⚠️ <strong>{{WARN_COUNT}}</strong> warnings</div>
+          <div>❌ <strong>{{ERROR_COUNT}}</strong> errors</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- C4 CONTAINER VIEW -->
+    <div id="view-containers" class="view" style="display:none;">
+      <h2>C4 Container Diagram (Level 2)</h2>
+      <div class="diagram-container" id="container-diagram">
+        <!-- SVG generated here -->
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-box" style="background: var(--surface-hover);"></div> Application Container</div>
+        <div class="legend-item"><div class="legend-box" style="background: #388bfd20;"></div> Database</div>
+        <div class="legend-item"><div class="legend-box" style="background: #21262d;"></div> External System</div>
+        <div class="legend-item"><span style="color: var(--accent-red);">───</span> DDD Layer Violation</div>
+      </div>
+    </div>
+
+    <!-- LAYER VALIDATION VIEW -->
+    <div id="view-layers" class="view" style="display:none;">
+      <h2>Clean Architecture Layer Validation</h2>
+      <div class="diagram-container">
+        <svg viewBox="0 0 800 400">
+          <!-- Concentric layers -->
+          <ellipse cx="400" cy="200" rx="380" ry="180" fill="#21262d" stroke="#30363d" stroke-width="2"/>
+          <ellipse cx="400" cy="200" rx="280" ry="130" fill="#1c2128" stroke="#30363d" stroke-width="2"/>
+          <ellipse cx="400" cy="200" rx="180" ry="80" fill="#161b22" stroke="#58a6ff" stroke-width="3"/>
+          <ellipse cx="400" cy="200" rx="80" ry="35" fill="#0d1117" stroke="#3fb950" stroke-width="3"/>
+          
+          <!-- Labels -->
+          <text x="400" y="205" text-anchor="middle" fill="#3fb950" font-size="14" font-weight="bold">Domain</text>
+          <text x="400" y="90" text-anchor="middle" fill="#58a6ff" font-size="12">Application</text>
+          <text x="400" y="50" text-anchor="middle" fill="#8b949e" font-size="11">Infrastructure</text>
+          <text x="400" y="25" text-anchor="middle" fill="#6e7681" font-size="10">Presentation</text>
+          
+          <!-- Violation arrows (if any) -->
+          <!-- {{VIOLATION_ARROWS}} -->
+        </svg>
+      </div>
+      <div id="violations-list" style="margin-top: 1rem;">
+        <!-- Populated from validation -->
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function showView(viewName) {
+      document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
+      document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+      document.getElementById('view-' + (viewName === 'index' ? 'index' : viewName)).style.display = 'block';
+      event.target.classList.add('active');
+    }
+  </script>
+</body>
+</html>
