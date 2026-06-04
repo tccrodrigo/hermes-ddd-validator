@@ -3,29 +3,34 @@
   "version": "1.0.0",
   "description": "DDD Architecture Validator for Hermes Agent - validates Domain-Driven Design patterns across Java, Node.js, Python, and React projects",
   "main": "scripts/validate-ddd.js",
-  "bin": {
-    "validate-ddd": "scripts/validate-ddd.js"
-  },
   "scripts": {
-    "test": "node scripts/validate-ddd.js . --visual"
+    "setup": "node scripts/setup.js",
+    "validate": "node scripts/validate-ddd.js",
+    "test": "node scripts/validate-ddd.js examples --strict"
+  },
+  "bin": {
+    "ddd-validate": "./scripts/validate-ddd.js"
   },
   "keywords": [
     "ddd",
     "domain-driven-design",
     "architecture",
-    "validator",
-    "c4-model",
-    "clean-architecture",
-    "hermes-agent",
-    "skil"
+    "validation",
+    "nodejs",
+    "java",
+    "python",
+    "typescript"
   ],
-  "author": "Rodrigo Monteiro",
+  "author": "tccrodrigo",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/monteiro74/hermes-ddd-validator.git"
+    "url": "https://github.com/tccrodrigo/hermes-ddd-validator"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=16.0.0"
+  },
+  "dependencies": {
+    "chokidar": "^3.5.3"
   }
 }

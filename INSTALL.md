@@ -1,270 +1,145 @@
 # Installation Guide
 
-## Quick Install
+## Prerequisites
 
-### Option 1: Clone and Run (Recommended)
+- **Node.js >= 16.0.0** (automatically installed by setup if missing)
+- Git (for cloning the repository)
+
+## One-Step Install
 
 ```bash
-# Clone the repository
+git clone https://github.com/tccrodrigo/hermes-ddd-validator.git
+cd hermes-ddd-validator
+node scripts/setup.js
+```
+
+The setup script will:
+1. ✅ Check for Node.js (installs if needed)
+2. ✅ Install dependencies (`npm install`)
+3. ✅ Create sample `.dddrc.json` config
+
+## Hermes Agent Integration
+
+### Install as Skill
+
+```bash
+# Go to your Hermes skills directory
+cd ~/.hermes/skills/
+
+# Clone
 git clone https://github.com/tccrodrigo/hermes-ddd-validator.git
 
-# Navigate to your project
-cd your-project
-
-# Run the validator
-node /path/to/hermes-ddd-validator/scripts/validate-ddd.js . --visual
+# Setup (auto-installs Node.js if needed)
+cd hermes-ddd-validator
+node scripts/setup.js
 ```
 
-### Option 2: Copy Script to Your Project
+Hermes Agent will automatically:
+- Detect the skill is installed
+- Run setup if Node.js is missing
+- Make `ddd-validate` available in PATH
+
+## Manual Installation
+
+### 1. Install Node.js
+
+#### macOS
+```bash
+brew install node
+```
+
+#### Ubuntu/Debian
+```bash
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt-get install -y nodejs
+```
+
+#### RHEL/CentOS/Fedora
+```bash
+curl -fsSL https://rpm.nodesource.com/setup_20.x | sudo bash -
+sudo yum install -y nodejs
+```
+
+#### Windows
+Download from: https://nodejs.org/
+
+Or via winget:
+```bash
+winget install OpenJS.NodeJS
+```
+
+### 2. Clone and Install
 
 ```bash
-# Copy the validator script to your project
-cp scripts/validate-ddd.js your-project/scripts/
-
-# Make it executable (optional)
-chmod +x your-project/scripts/validate-ddd.js
-
-# Run it
-cd your-project
-./scripts/validate-ddd.js . --visual --doc=./docs
+git clone https://github.com/tccrodrigo/hermes-ddd-validator.git
+cd hermes-ddd-validator
+npm install
 ```
 
-### Option 3: Global Install (NPM)
+## Global Install (Optional)
 
 ```bash
-# Link globally
-npm link
-
-# Or install from local source
-npm install -g /path/to/hermes-ddd-validator
-
-# Run anywhere
-validate-ddd . --visual
+npm install -g
+# or
+ln -s $(pwd)/scripts/validate-ddd.js /usr/local/bin/ddd-validate
 ```
 
-## Requirements
+Now use globally:
+```bash
+ddd-validate /path/to/project --visual
+```
 
-- **Node.js** >= 18.0.0
-- Your project must have one of:
-  - `package.json` (Node.js/React projects)
-  - `pom.xml` or `build.gradle` (Java projects)
-  - `requirements.txt` or `pyproject.toml` (Python projects)
-
-## First Run
-
-1. **Validate your project:**
+## Verify Installation
 
 ```bash
-cd your-project
-node /path/to/hermes-ddd-validator/scripts/validate-ddd.js . --visual
-```
+# Check Node.js
+node --version  # Should be >= 16
 
-2. **Check the output:**
+# Check validator
+node scripts/validate-ddd.js --help
 
-```
-📂 Location: /your-project/docs
-
-Generated files:
-   📄 index.html       ← Open in browser (human view)
-   📄 INDEX.md         ← Read first (AI context)
-   📄 VALIDATION_REPORT.md    ← Violations found
-   📄 C4_CONTEXT.md           ← C4 Level 1
-   📄 C4_CONTAINERS.md        ← C4 Level 2
-   📄 C4_COMPONENTS.md        ← C4 Level 3
-   📄 BOUNDED_CONTEXTS.md     ← Context map
-```
-
-3. **Review violations (if any):**
-
-If violations are found, the validator will recommend:
-
-```
-📝 RECOMMENDATION: Invoke /brainstorming to create DDD adequacy plan
-```
-
-4. **Create adequacy plan (if violations exist):**
-
-Use your AI agent (Hermes/Claude/etc) with the `brainstorming` skill:
-
-```
-/brainstorming Create DDD adequacy plan for this project.
-
-Context:
-- Framework: [auto-detected]
-- Violations: [from VALIDATION_REPORT.md]
-- Docs: ./docs/
-```
-
-## Configuration
-
-### Output Directory
-
-```bash
-# Default: ./docs
-node validate-ddd.js . --visual
-
-# Custom: ./architecture
-node validate-ddd.js . --visual --doc=./architecture
-
-# CI/CD output
-node validate-ddd.js . --visual --doc=$CI_ARTIFACTS_DIR
-```
-
-### Strict Mode (CI/CD)
-
-```bash
-# Fail on any violation (useful for CI)
-node validate-ddd.js . --strict
-
-# In CI (GitHub Actions, GitLab, etc)
-node validate-ddd.js . --strict || exit 1
-```
-
-### Specific Bounded Context
-
-```bash
-# Validate only user context
-node validate-ddd.js . --bounded-context=user --visual
-```
-
-## Integration Examples
-
-### GitHub Actions
-
-```yaml
-name: DDD Validation
-
-on: [push, pull_request]
-
-jobs:
-  validate:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-      
-      - name: Clone DDD Validator
-        run: |
-          git clone https://github.com/tccrodrigo/hermes-ddd-validator.git /tmp/ddd-validator
-      
-      - name: Run DDD Validation
-        run: |
-          node /tmp/ddd-validator/scripts/validate-ddd.js . --strict --doc=./docs
-      
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: ddd-docs
-          path: docs/
-```
-
-### GitLab CI
-
-```yaml
-validate-ddd:
-  stage: test
-  image: node:18
-  before_script:
-    - git clone https://github.com/tccrodrigo/hermes-ddd-validator.git /tmp/ddd-validator
-  script:
-    - node /tmp/ddd-validator/scripts/validate-ddd.js . --strict --doc=./docs
-  artifacts:
-    paths:
-      - docs/
-    expire_in: 1 week
-```
-
-### Pre-commit Hook
-
-```bash
-#!/bin/sh
-# .git/hooks/pre-commit
-
-# Run DDD validator
-node path/to/hermes-ddd-validator/scripts/validate-ddd.js . --strict
-if [ $? -ne 0 ]; then
-    echo "❌ DDD validation failed. Fix violations before committing."
-    exit 1
-fi
+# Test on examples
+node scripts/validate-ddd.js examples/nodejs-api --visual
 ```
 
 ## Troubleshooting
 
-### "No layers found"
+### "node: command not found"
 
-Your project structure doesn't match expected DDD layers. Expected:
+Node.js not installed or not in PATH.
 
-```
-project/
-├── src/
-│   ├── domain/           ← Required
-│   ├── application/      ← Required
-│   ├── infrastructure/   ← Required
-│   └── controllers/      ← Optional
-```
+**Fix:**
+```bash
+# Re-run setup
+node scripts/setup.js
 
-Or root-level:
-
-```
-project/
-├── domain/               ← Required
-├── application/          ← Required
-├── infrastructure/       ← Required
+# Or install manually via nvm/window installer
 ```
 
-### "Framework not detected"
-
-Ensure your project has one of:
-- `package.json` (Node.js)
-- `pom.xml` or `build.gradle` (Java)
-- `requirements.txt` or `pyproject.toml` (Python)
-
-### Permission denied
+### Permission denied (Linux/macOS)
 
 ```bash
 chmod +x scripts/validate-ddd.js
+chmod +x scripts/setup.js
 ```
 
-## Supported Frameworks
+### Watch mode requires chokidar
 
-| Framework | Detection File | Status |
-|-----------|---------------|--------|
-| Node.js/TypeScript | `package.json`, `tsconfig.json` | ✅ Supported |
-| React | `package.json` with react | ✅ Supported |
-| Java Spring Boot | `pom.xml`, `build.gradle` | ✅ Supported |
-| Python | `requirements.txt`, `pyproject.toml` | ✅ Supported |
+```bash
+cd hermes-ddd-validator
+npm install chokidar
+```
 
-## How It Works
+## Uninstall
 
-1. **Detection:** Scans root directory for framework markers
-2. **Layer Scanning:** Recursively scans `domain/`, `application/`, `infrastructure/`
-3. **Violation Check:** Parses imports to detect layer violations
-   - Domain → Application/Infra ❌
-   - Application → Infra ❌
-   - Infra → Domain ✅ (interface)
-4. **Doc Generation:** Creates C4 diagrams and validation reports
-5. **Recommendation:** Suggests `brainstorming` if violations exist
+```bash
+# Remove skill directory
+rm -rf ~/.hermes/skills/hermes-ddd-validator
 
-## Next Steps
+# Or globally
+npm uninstall -g hermes-ddd-validator
+```
 
-After installation and initial validation:
+---
 
-1. **Review** `docs/index.html` in browser
-2. **Read** `docs/INDEX.md` for AI context
-3. **Fix** violations or create adequacy plan with `/brainstorming`
-4. **Re-run** validation after fixes: `validate-ddd . --strict`
-5. **Integrate** into CI/CD for continuous validation
-
-## Getting Help
-
-- **Issues:** https://github.com/tccrodrigo/hermes-ddd-validator/issues
-- **Discussions:** Open a GitHub Discussion
-- **Examples:** See `examples/` directory (coming soon)
-
-## License
-
-MIT License - Free for personal and commercial use.
+**Next:** Read [README.md](README.md) for usage examples.
